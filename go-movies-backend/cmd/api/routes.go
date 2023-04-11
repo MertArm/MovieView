@@ -13,8 +13,11 @@ func (app *application) routes() http.Handler {
 
 	// Log backtrace if error occurs and recover page content
 	mux.Use(middleware.Recoverer)
+	mux.Use(app.enableCORS)
 
 	mux.Get("/", app.Home)
+
+	mux.Get("/movies", app.AllMovies)
 
 	return mux
 }

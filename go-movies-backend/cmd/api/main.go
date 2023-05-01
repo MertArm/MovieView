@@ -70,13 +70,6 @@ func main() {
 }
 
 func (app *application) authenticate(w http.ResponseWriter, r *http.Request) {
-	// Read JSON payload
-
-
-	// Validate user against DB
-
-	// Check password
-
 	// Create JWT user
 	u := jwtUser {
 		ID: 1,

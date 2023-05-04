@@ -69,25 +69,3 @@ func main() {
 	}
 }
 
-func (app *application) authenticate(w http.ResponseWriter, r *http.Request) {
-	// Create JWT user
-	u := jwtUser {
-		ID: 1,
-		FirstName: "Admin",
-		LastName: "User",
-	}
-
-	// Generate tokens
-	tokens, err := app.auth.GenerateTokenPair(&u)
-
-	if err != nil {
-		app.errorJSON(w, err)
-		return
-	}
-
-	log.Println(tokens.Token)
-	refreshCookie := app.auth.GetRefreshCookie(tokens.RefreshToken)
-	http.SetCookie(w, refreshCookie)
-
-	w.Write([]byte(tokens.Token))
-}

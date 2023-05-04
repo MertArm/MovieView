@@ -85,28 +85,28 @@ func (j *Auth) GenerateTokenPair(user *jwtUser) (TokenPairs, error) {
 
 func (j *Auth) GetRefreshCookie(refreshToken string) *http.Cookie {
 	return &http.Cookie{
-		Name: j.CookieName,
-		Path: j.CookiePath,
-		Value: refreshToken,
-		Expires: time.Now().Add(j.RefreshExpiry),
-		MaxAge: int(j.RefreshExpiry.Seconds()),
+		Name:     j.CookieName,
+		Path:     j.CookiePath,
+		Value:    refreshToken,
+		Expires:  time.Now().Add(j.RefreshExpiry),
+		MaxAge:   int(j.RefreshExpiry.Seconds()),
 		SameSite: http.SameSiteStrictMode,
-		Domain: j.CookieDomain,
+		Domain:   j.CookieDomain,
 		HttpOnly: true,
-		Secure: true,
+		Secure:   true,
 	}
 }
 
 func (j *Auth) GetExpiredRefreshCookie() *http.Cookie {
 	return &http.Cookie{
-		Name: j.CookieName,
-		Path: j.CookiePath,
-		Value: "",
-		Expires: time.Unix(0, 0),
-		MaxAge: -1,
+		Name:     j.CookieName,
+		Path:     j.CookiePath,
+		Value:    "",
+		Expires:  time.Unix(0, 0),
+		MaxAge:   -1,
 		SameSite: http.SameSiteStrictMode,
-		Domain: j.CookieDomain,
+		Domain:   j.CookieDomain,
 		HttpOnly: true,
-		Secure: true,
+		Secure:   true,
 	}
 }

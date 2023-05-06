@@ -3,6 +3,9 @@ package main
 import (
 	"errors"
 	"net/http"
+	"strconv"
+
+	"github.com/golang-jwt/jwt/v5"
 )
 
 func (app *application) Home(w http.ResponseWriter, r *http.Request) {
@@ -75,4 +78,56 @@ func (app *application) authenticate(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, refreshCookie)
 
 	app.writeJSON(w, http.StatusAccepted, tokens)
+}
+
+func (app *application) refreshToken(w http.ResponseWriter, r *http.Request) {
+	for _, cookie := range r.Cookies() {
+		if cookie.Name == app.auth.CookieName {
+			claims := &Claims{}
+			refreshToken := cookie.Value
+
+			// Parse token to get claims
+			_, err := jwt.ParseWithClaims(refreshToken, claims, func(token *jwt.Token) (interface{}, error) {
+				return []byte(app.JWTSecret), nil
+			})
+			if err != nil {
+				app.errorJSON(w, errors.New("unauthorized"), http.StatusUnauthorized)
+				return
+			}
+
+			// Get user ID from token claims
+			userID, err := strconv.Atoi(claims.Subject)
+			if err != nil {
+				app.errorJSON(w, errors.New("unknown user"), http.StatusUnauthorized)
+				return
+			}
+
+			user, err := app.DB.GetUserById(userID)
+			if err != nil {
+				app.errorJSON(w, errors.New("unknown user"), http.StatusUnauthorized)
+				return
+			}
+
+			u := jwtUser{
+				ID:        user.ID,
+				FirstName: user.FirstName,
+				LastName:  user.LastName,
+			}
+
+			tokenPairs, err := app.auth.GenerateTokenPair(&u)
+			if err != nil {
+				app.errorJSON(w, errors.New("error generating tokens"), http.StatusUnauthorized)
+				return
+			}
+
+			http.SetCookie(w, app.auth.GetRefreshCookie(tokenPairs.RefreshToken))
+
+			app.writeJSON(w, http.StatusOK, tokenPairs)
+		}
+	}
+}
+
+func (app *application) logout(w http.ResponseWriter, r *http.Request) {
+	http.SetCookie(w, app.auth.GetExpiredRefreshCookie())
+	w.WriteHeader(http.StatusAccepted)
 }

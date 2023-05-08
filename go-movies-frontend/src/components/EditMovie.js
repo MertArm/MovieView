@@ -104,6 +104,22 @@ const EditMovie = () => {
     console.log("Value in handleCheck:", event.target.value);
     console.log("Checked is", event.target.checked);
     console.log("Position is", position);
+
+    let tmpArr = movie.genres;
+    tmpArr[position].checked = !tmpArr[position].checked;
+
+    let tmpIDs = movie.genres_array;
+
+    if (!event.target.checked) {
+        tmpIDs.splice(tmpIDs.indexOf(event.target.value));
+    } else {
+        tmpIDs.push(parseInt(event.target.value, 10));
+    }
+
+    setMovie({
+        ...movie,
+        genres_array: tmpIDs,
+    })
   }
 
   return (

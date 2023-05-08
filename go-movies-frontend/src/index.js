@@ -36,6 +36,10 @@ const router = createBrowserRouter([
         element: <EditMovie/>
       },
       {
+        path: "/admin/movie/:id",
+        element: <EditMovie/>
+      },
+      {
         path: "/manage-catalog",
         element: <ManageCatalog/>
       },

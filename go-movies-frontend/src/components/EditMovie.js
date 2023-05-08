@@ -74,7 +74,7 @@ const EditMovie = () => {
           });
 
           setMovie((m) => ({
-            ...movie,
+            ...m,
             genres: checks,
             genres_array: [],
           }));

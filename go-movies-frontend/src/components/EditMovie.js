@@ -106,14 +106,13 @@ const EditMovie = () => {
     });
 
     if (movie.genres_array.length === 0) {
-        Swal.fire({
-            title: 'Error',
-            text: 'Please choose at least one genre',
-            icon: 'error',
-            confirmButtonText: 'OK',
-        })
-        errors.push("genres");
-
+      Swal.fire({
+        title: "Error",
+        text: "Please choose at least one genre",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+      errors.push("genres");
     }
 
     setErrors(errors);
@@ -121,6 +120,44 @@ const EditMovie = () => {
     if (errors.length > 0) {
       return false;
     }
+
+    // Save changes
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    headers.append("Authorization", "Bearer " + jwtToken);
+
+    // Add new movie
+    let method = "PUT";
+
+    // If movie exists, use patch instead for updating
+    if (movie.id > 0) {
+      method = "PATCH";
+    }
+
+    const requestBody = movie;
+
+    requestBody.release_date = new Date(movie.release_date);
+    requestBody.runtime = parseInt(movie.runtime, 10);
+
+    let requestOptions = {
+      body: JSON.stringify(requestBody),
+      method: method,
+      headers: headers,
+      credentials: "include",
+    };
+
+    fetch(`/admin/movies/${movie.id}`, requestOptions)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.error) {
+          console.log(data.error);
+        } else {
+          navigate("/manage-catalogue");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const handleChange = () => (event) => {
@@ -235,7 +272,7 @@ const EditMovie = () => {
           </>
         )}
 
-        <hr/>
+        <hr />
         <button className="btn btn-primary">Save</button>
       </form>
     </div>

@@ -8,7 +8,7 @@ const TextArea = (props) => {
         className="form-control"
         id={props.name}
         name={props.name}
-        vale={props.value}
+        value={props.value}
         onChange={props.onChange}
         rows={props.rows}
       />

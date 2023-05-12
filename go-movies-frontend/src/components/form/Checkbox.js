@@ -1,4 +1,4 @@
-const Checkbox = (props) => {
+const CheckBox = (props) => {
   return (
     <div className="form-check">
       <input
@@ -17,4 +17,4 @@ const Checkbox = (props) => {
   );
 };
 
-export default Checkbox;
+export default CheckBox;

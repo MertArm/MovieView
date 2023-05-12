@@ -84,6 +84,48 @@ const EditMovie = () => {
           console.log(err);
         });
     } else {
+      // Edit existing movie
+      const headers = new Headers();
+      headers.append("Content-Type", "application/json");
+      headers.append("Authorization", "Bearer " + jwtToken);
+
+      const requestOptions = {
+        method: "GET",
+        headers: headers,
+      };
+
+      fetch(`/admin/movies/${id}`, requestOptions)
+        .then((response) => {
+          if (response.status !== 200) {
+            setError("Invalid response code: " + response.status);
+          }
+          return response.json();
+        })
+        .then((data) => {
+          // Fix release date
+          data.movie.release_date = new Date(data.movie.release_date)
+            .toISOString()
+            .split('T')[0];
+
+          const checks = [];
+
+          data.genres.forEach((g) => {
+            if (data.movie.genres_array.indexOf(g.id) !== -1) {
+              checks.push({ id: g.id, checked: true, genre: g.genre });
+            } else {
+              checks.push({ id: g.id, checked: false, genre: g.genre });
+            }
+          });
+
+          // Set state
+          setMovie({
+            ...data.movie,
+            genres: checks,
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
   }, [id, jwtToken, navigate]);
 
@@ -136,7 +178,10 @@ const EditMovie = () => {
 
     const requestBody = movie;
 
-    requestBody.release_date = new Date(movie.release_date);
+    requestBody.release_date = new Date(movie.release_date)
+      .toISOString()
+      .split('T')[0];
+;
     requestBody.runtime = parseInt(movie.runtime, 10);
 
     let requestOptions = {
@@ -196,7 +241,7 @@ const EditMovie = () => {
     <div>
       <h2>Add/Edit Movie</h2>
       <hr />
-      {/* <pre>{JSON.stringify(movie, null, 3)}</pre> */}
+      <pre>{JSON.stringify(movie, null, 3)}</pre>
 
       <form onSubmit={handleSubmit}>
         <input type="hidden" name="id" value={movie.id} id="id"></input>
@@ -256,9 +301,9 @@ const EditMovie = () => {
 
         <hr />
         <h3>Genres</h3>
-        {movie.genres && movie.genres.length > 1 && (
+        {movie.genres && movie.genres.length > 1 && 
           <>
-            {Array.from(movie.genres).map((g, index) => (
+            {Array.from(movie.genres).map((g, index) => 
               <Checkbox
                 title={g.genre}
                 name={"genre"}
@@ -268,9 +313,9 @@ const EditMovie = () => {
                 value={g.id}
                 checked={movie.genres[index].checked}
               />
-            ))}
+            )}
           </>
-        )}
+        }
 
         <hr />
         <button className="btn btn-primary">Save</button>

@@ -23,8 +23,9 @@ func (m *PostgresDBRepo) AllMovies() ([]*models.Movie, error) {
 
 	query := `
 		select
-			id, title, release_date, runtime, mpaa_rating, description,
-			coalesce(image, ''), created_at, updated_at
+			id, title, release_date, runtime,
+			mpaa_rating, description, coalesce(image, ''),
+			created_at, updated_at
 		from
 			movies
 		order by
@@ -32,7 +33,6 @@ func (m *PostgresDBRepo) AllMovies() ([]*models.Movie, error) {
 	`
 
 	rows, err := m.DB.QueryContext(ctx, query)
-
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +53,6 @@ func (m *PostgresDBRepo) AllMovies() ([]*models.Movie, error) {
 			&movie.CreatedAt,
 			&movie.UpdatedAt,
 		)
-
 		if err != nil {
 			return nil, err
 		}
@@ -68,7 +67,7 @@ func (m *PostgresDBRepo) OneMovie(id int) (*models.Movie, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
 
-	query := `select id, title, release_date, runtime, mpaa_rating,
+	query := `select id, title, release_date, runtime, mpaa_rating, 
 		description, coalesce(image, ''), created_at, updated_at
 		from movies where id = $1`
 
@@ -128,7 +127,7 @@ func (m *PostgresDBRepo) OneMovieForEdit(id int) (*models.Movie, []*models.Genre
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
 
-	query := `select id, title, release_date, runtime, mpaa_rating,
+	query := `select id, title, release_date, runtime, mpaa_rating, 
 		description, coalesce(image, ''), created_at, updated_at
 		from movies where id = $1`
 
@@ -304,8 +303,11 @@ func (m *PostgresDBRepo) InsertMovie(movie models.Movie) (int, error) {
 	defer cancel()
 
 	statement := `insert into movies (title, description, release_date, runtime,
-					mpaa_rating, created_at, updated_at, image)
-					values ($1, $2, $3, $4, $5, $6, $7, $8) returning id`
+			mpaa_rating, created_at, updated_at, image)
+			values ($1, $2, $3, $4, $5, $6, $7, $8) returning id`
+
+
+					
 
 	var newID int
 

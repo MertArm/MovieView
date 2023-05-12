@@ -178,9 +178,7 @@ const EditMovie = () => {
 
     const requestBody = movie;
 
-    requestBody.release_date = new Date(movie.release_date)
-      .toISOString()
-      .split('T')[0];
+    requestBody.release_date = new Date(movie.release_date);
 ;
     requestBody.runtime = parseInt(movie.runtime, 10);
 

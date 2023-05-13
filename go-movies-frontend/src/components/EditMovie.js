@@ -239,7 +239,7 @@ const EditMovie = () => {
     <div>
       <h2>Add/Edit Movie</h2>
       <hr />
-      <pre>{JSON.stringify(movie, null, 3)}</pre>
+      {/* <pre>{JSON.stringify(movie, null, 3)}</pre> */}
 
       <form onSubmit={handleSubmit}>
         <input type="hidden" name="id" value={movie.id} id="id"></input>
@@ -281,6 +281,7 @@ const EditMovie = () => {
           title={"MPAA Rating"}
           name={"mpaa_rating"}
           options={mpaaOptions}
+          value={movie.mpaa_rating}
           onChange={handleChange("mpaa_rating")}
           placeHolder={"Choose rating"}
           errorDiv={hasError("mpaa_rating") ? "text-danger" : "d-none"}

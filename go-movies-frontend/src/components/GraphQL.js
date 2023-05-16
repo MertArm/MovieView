@@ -34,6 +34,7 @@ const GraphQL = () => {
       .then((response) => response.json())
       .then((response) => {
         let theList = Object.values(response.data.search);
+        setMovies(theList)
       })
       .catch((err) => {
         console.log(err);
